@@ -1,0 +1,52 @@
+/* Essential hover animations */
+@media (hover: hover) {
+    .card {
+        transition: transform 0.2s;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+    }
+}
+
+/* Cart and Wishlist Styles */
+.offcanvas {
+    width: min(400px, 80vw);
+}
+
+#cartItems, #wishlistItems {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+
+#cartItems::-webkit-scrollbar,
+#wishlistItems::-webkit-scrollbar {
+    width: 5px;
+}
+
+#cartItems::-webkit-scrollbar-track,
+#wishlistItems::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+#cartItems::-webkit-scrollbar-thumb,
+#wishlistItems::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+}
+
+.btn-add-cart:disabled {
+    cursor: not-allowed;
+}
+
+.badge {
+    transition: transform 0.2s;
+}
+
+.badge:not(:empty) {
+    transform: scale(1);
+}
+
+.badge:empty {
+    transform: scale(0);
+}
