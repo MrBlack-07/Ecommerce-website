@@ -4,7 +4,7 @@ import "./LoginSignup.css";
 // import { logIn } from '../utils/auth'; // Import login utility
 import { logIn } from '/src/utils/auth.js';
 
-const LoginSignup = ({ onLogin }) => {
+const LoginSignup = ({ onLogin, onGuestContinue }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     fullname: '',
@@ -15,6 +15,7 @@ const LoginSignup = ({ onLogin }) => {
   });
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,37 +25,37 @@ const LoginSignup = ({ onLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    const route = isLogin ? '/login' : '/signup';
-
-    const payload = isLogin
-      ? { emailOrMobile: formData.emailOrMobile, password: formData.password }
-      : {
-        fullname: formData.fullname,
-        email: formData.email,
-        mobile: formData.mobile,
-        password: formData.password,
-      };
+    setError('');
 
     try {
-      const res = await axios.post(`http://localhost:5000${route}`, payload);
-
-      if (!isLogin) {
-        setIsLogin(true);
-        setMessage('Signup successful! Please log in.');
-        setFormData({
-          fullname: '',
-          email: '',
-          mobile: '',
-          password: '',
-          emailOrMobile: '',
+      if (isLogin) {
+        const response = await axios.post('/api/login', {
+          emailOrMobile: formData.email || formData.mobile,
+          password: formData.password
         });
+        
+        if (response.data.message === 'Login successful') {
+          localStorage.setItem('user', JSON.stringify(response.data.user));
+          onLogin();
+        }
       } else {
-        setMessage(res.data.message);
-        logIn(); // store login in localStorage
-        if (typeof onLogin === "function") onLogin(); // notify parent
+        const response = await axios.post('/api/signup', formData);
+        
+        if (response.data.message === 'User registered successfully') {
+          // Auto-login after successful signup
+          const loginResponse = await axios.post('/api/login', {
+            emailOrMobile: formData.email,
+            password: formData.password
+          });
+          
+          if (loginResponse.data.message === 'Login successful') {
+            localStorage.setItem('user', JSON.stringify(loginResponse.data.user));
+            onLogin();
+          }
+        }
       }
-    } catch (err) {
-      setMessage(err.response?.data?.error || 'Something went wrong');
+    } catch (error) {
+      setError(error.response?.data?.error || 'An error occurred');
     } finally {
       setIsLoading(false);
     }
@@ -74,6 +75,12 @@ const LoginSignup = ({ onLogin }) => {
         {message && (
           <div className={`alert ${message.includes('success') ? 'alert-success' : 'alert-danger'} fade-in`}>
             {message}
+          </div>
+        )}
+
+        {error && (
+          <div className="error-message">
+            {error}
           </div>
         )}
 
@@ -190,7 +197,7 @@ const LoginSignup = ({ onLogin }) => {
         <div className="guest-option">
           <button
             className="btn btn-outline"
-            onClick={() => onGuestContinue?.()}>
+            onClick={onGuestContinue}>
             Continue as Guest
           </button>
         </div>

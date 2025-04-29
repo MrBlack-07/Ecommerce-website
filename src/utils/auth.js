@@ -1,35 +1,12 @@
-// export function isLoggedIn() {
-//     return localStorage.getItem("isLoggedIn") === "true";
-//   }
-  
-//   export function logIn() {
-//     localStorage.setItem("isLoggedIn", "true");
-//   }
-  
-//   export function logOut() {
-//     localStorage.removeItem("isLoggedIn");
-//   }
-  
-  
-  
-// import { logIn } from "./auth";
-  
-//   const handleLogin = async () => {
-   
-//     logIn();
-//     props.onLogin(); e
-//   };
 export function isLoggedIn() {
   return localStorage.getItem("isLoggedIn") === "true";
 }
 
 // 2. Login function (sets flag + stores user data if needed)
-export function logIn(userData = null) {
-  localStorage.setItem("isLoggedIn", "true");
-  if (userData) {
-    localStorage.setItem("user", JSON.stringify(userData));
-  }
-}
+export const logIn = (user) => {
+  localStorage.setItem('isLoggedIn', 'true');
+  localStorage.setItem('user', JSON.stringify(user));
+};
 
 // 3. Logout function (clears all auth-related data)
 export function logOut() {

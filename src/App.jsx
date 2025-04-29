@@ -1,23 +1,7 @@
-// import { useEffect, useState } from "react";
-// import Home from "./pages/Home";
-// import LoginSignup from "./pages/LoginSignup";
-
-// function App() {
-//   const [loggedIn, setLoggedIn] = useState(false);
-
-//   useEffect(() => {
-//     const isLogged = localStorage.getItem("isLoggedIn") === "true";
-//     setLoggedIn(isLogged);
-//   }, []);
-
-//   return loggedIn ? <Home /> : <LoginSignup onLogin={() => setLoggedIn(true)} />;
-// }
-
-// export default App;
 import { useEffect, useState } from "react";
 import Home from "./pages/Home";
 import LoginSignup from "./pages/LoginSignup";
-import AuthModal from "./components/AuthModal"; // We'll create this
+import AuthModal from "./components/AuthModal";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);

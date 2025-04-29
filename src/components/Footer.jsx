@@ -37,7 +37,7 @@ const Footer = () => {
               <div className="col-6 col-md-4">
                 <h6 className="mb-3 text-uppercase text-white">Contact</h6>
                 <ul className="list-unstyled mb-0">
-                  <li className="mb-2 text-white-50"><i className="fas fa-phone me-2"></i>9360056346</li>
+                  <li className="mb-2 text-white-50"><i className="fas fa-phone me-2"></i>6369620736</li>
                   <li className="mb-2 text-white-50"><i className="fas fa-envelope me-2"></i>[email&#160;protected]</li>
                   <li className="text-white-50"><i className="fas fa-map-marker-alt me-2"></i>123 Fashion St, NY</li>
                 </ul>
