@@ -16,14 +16,18 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/server.js"
+      "dest": "server.js"
     },
     {
-      "src": "/(.*)",
-      "dest": "/dist/$1"
+      "src": "^/assets/(.*)",
+      "dest": "/dist/assets/$1"
     },
     {
-      "src": "/",
+      "src": "^/favicon.ico",
+      "dest": "/dist/favicon.ico"
+    },
+    {
+      "src": ".*",
       "dest": "/dist/index.html"
     }
   ]

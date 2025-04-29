@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import "./LoginSignup.css";
-// import { logIn } from '../utils/auth'; // Import login utility
-import { logIn } from '/src/utils/auth.js';
+import api from '../utils/api';
 
 const LoginSignup = ({ onLogin, onGuestContinue }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -20,42 +18,71 @@ const LoginSignup = ({ onLogin, onGuestContinue }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    // Clear any previous errors when user starts typing
+    setError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
+    setMessage('');
 
     try {
       if (isLogin) {
-        const response = await axios.post('/api/login', {
-          emailOrMobile: formData.email || formData.mobile,
+        const response = await api.post('/api/login', {
+          emailOrMobile: formData.emailOrMobile,
           password: formData.password
         });
         
         if (response.data.message === 'Login successful') {
+          setMessage('Login successful!');
           localStorage.setItem('user', JSON.stringify(response.data.user));
-          onLogin();
+          setTimeout(() => onLogin(), 1000);
         }
       } else {
-        const response = await axios.post('/api/signup', formData);
+        // Validate password length
+        if (formData.password.length < 6) {
+          setError('Password must be at least 6 characters long');
+          setIsLoading(false);
+          return;
+        }
+
+        const response = await api.post('/api/signup', {
+          fullname: formData.fullname,
+          email: formData.email,
+          mobile: formData.mobile,
+          password: formData.password
+        });
         
         if (response.data.message === 'User registered successfully') {
+          setMessage('Registration successful! Logging you in...');
+          
           // Auto-login after successful signup
-          const loginResponse = await axios.post('/api/login', {
+          const loginResponse = await api.post('/api/login', {
             emailOrMobile: formData.email,
             password: formData.password
           });
           
           if (loginResponse.data.message === 'Login successful') {
             localStorage.setItem('user', JSON.stringify(loginResponse.data.user));
-            onLogin();
+            setTimeout(() => onLogin(), 1000);
           }
         }
       }
     } catch (error) {
-      setError(error.response?.data?.error || 'An error occurred');
+      console.error('Auth error:', error);
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        setError(error.response.data.error || 'Authentication failed');
+      } else if (error.request) {
+        // The request was made but no response was received
+        setError('No response from server. Please try again later.');
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        setError('An error occurred. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -73,13 +100,13 @@ const LoginSignup = ({ onLogin, onGuestContinue }) => {
         </div>
 
         {message && (
-          <div className={`alert ${message.includes('success') ? 'alert-success' : 'alert-danger'} fade-in`}>
+          <div className={`alert alert-success fade-in`}>
             {message}
           </div>
         )}
 
         {error && (
-          <div className="error-message">
+          <div className="alert alert-danger fade-in">
             {error}
           </div>
         )}
@@ -209,6 +236,7 @@ const LoginSignup = ({ onLogin, onGuestContinue }) => {
               onClick={() => {
                 setIsLogin(!isLogin);
                 setMessage('');
+                setError('');
                 setFormData({
                   fullname: '',
                   email: '',
