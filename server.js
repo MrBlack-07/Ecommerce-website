@@ -28,6 +28,30 @@ db.connect((err) => {
   console.log("Connected to MySQL Database!");
 });
 
+// Search route
+app.get("/api/search", (req, res) => {
+  const searchQuery = req.query.q;
+  if (!searchQuery) {
+    return res.json([]);
+  }
+
+  const query = `
+    SELECT id, name, price, image 
+    FROM products 
+    WHERE name LIKE ? OR description LIKE ?
+    LIMIT 5
+  `;
+  const searchPattern = `%${searchQuery}%`;
+
+  db.query(query, [searchPattern, searchPattern], (err, results) => {
+    if (err) {
+      console.error("Search error:", err);
+      return res.status(500).json({ error: "Search failed" });
+    }
+    res.json(results);
+  });
+});
+
 // Signup route
 app.post("/signup", async (req, res) => {
   const { fullname, email, mobile, password } = req.body;

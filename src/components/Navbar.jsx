@@ -1,6 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const Navbar = ({ isGuest, onProtectedAction }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [showResults, setShowResults] = useState(false);
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+
+    try {
+      const response = await fetch(`/api/search?q=${encodeURIComponent(searchQuery)}`);
+      const data = await response.json();
+      setSearchResults(data);
+      setShowResults(true);
+    } catch (error) {
+      console.error('Search error:', error);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    setSearchQuery(e.target.value);
+    if (!e.target.value) {
+      setShowResults(false);
+    }
+  };
+
   return (
     <nav className="navbar navbar-expand-lg bg-dark bg-gradient fixed-top">
       <div className="container-fluid px-3 px-lg-5">
@@ -30,11 +55,39 @@ const Navbar = ({ isGuest, onProtectedAction }) => {
             <li className="nav-item"><a className="nav-link text-white-50" href="#">Deals</a></li>
             <li className="nav-item"><a className="nav-link text-white-50" href="#">Contact</a></li>
           </ul>
-          <form className="d-flex me-3">
+          <form className="d-flex me-3 position-relative" onSubmit={handleSearch}>
             <div className="input-group">
-              <input type="search" className="form-control border-0" placeholder="Search products..." />
+              <input 
+                type="search" 
+                className="form-control border-0" 
+                placeholder="Search products..." 
+                value={searchQuery}
+                onChange={handleInputChange}
+              />
               <button className="btn btn-light" type="submit"><i className="fas fa-search"></i></button>
             </div>
+            {showResults && searchResults.length > 0 && (
+              <div className="search-results position-absolute top-100 start-0 w-100 mt-1 bg-white rounded shadow">
+                {searchResults.map((result) => (
+                  <a 
+                    key={result.id} 
+                    href={`/product/${result.id}`}
+                    className="d-flex align-items-center p-2 text-decoration-none text-dark border-bottom"
+                  >
+                    <img 
+                      src={result.image} 
+                      alt={result.name} 
+                      className="me-2" 
+                      style={{ width: '40px', height: '40px', objectFit: 'cover' }} 
+                    />
+                    <div>
+                      <div className="fw-bold">{result.name}</div>
+                      <div className="text-muted small">{result.price}</div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            )}
           </form>
         </div>
         <div className="d-flex align-items-center gap-2">
