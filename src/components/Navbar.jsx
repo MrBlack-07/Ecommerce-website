@@ -1,4 +1,6 @@
-const Navbar = () => {
+import React from 'react';
+
+const Navbar = ({ isGuest, onProtectedAction }) => {
   return (
     <nav className="navbar navbar-expand-lg bg-dark bg-gradient fixed-top">
       <div className="container-fluid px-3 px-lg-5">
@@ -6,7 +8,7 @@ const Navbar = () => {
           <i className="fas fa-bars text-white"></i>
         </button>
         <a className="navbar-brand mx-auto mx-lg-0" href="#">
-          <img src="logo.PNG" alt="Logo" width="100" className="img-fluid" />
+          <img src="/logo.PNG" alt="Logo" width="100" className="img-fluid" />
         </a>
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto me-auto">
@@ -36,11 +38,11 @@ const Navbar = () => {
           </form>
         </div>
         <div className="d-flex align-items-center gap-2">
-          <button className="btn btn-link text-white position-relative me-2">
+          <button className="btn btn-link text-white position-relative me-2" onClick={onProtectedAction}>
             <i className="fas fa-shopping-cart fs-5"></i>
             <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
           </button>
-          <button className="btn btn-link text-white position-relative me-2">
+          <button className="btn btn-link text-white position-relative me-2" onClick={onProtectedAction}>
             <i className="fas fa-heart fs-5"></i>
             <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
           </button>
@@ -49,13 +51,22 @@ const Navbar = () => {
               <i className="fas fa-user fs-5"></i>
             </button>
             <ul className="dropdown-menu dropdown-menu-end dropdown-menu-dark bg-gradient">
-              <li><a className="dropdown-item" href="#">Your Account</a></li>
-              <li><a className="dropdown-item" href="#">Switch Accounts</a></li>
-              <li><a className="dropdown-item" href="#">Your Orders</a></li>
-              <li><a className="dropdown-item" href="#">Your Wish List</a></li>
-              <li><a className="dropdown-item" href="#">Keep Shopping</a></li>
-              <li><hr className="dropdown-divider" /></li>
-              <li><a className="dropdown-item text-danger" href="/">Sign Out</a></li>
+              {isGuest ? (
+                <>
+                  <li><a className="dropdown-item" href="#">Sign In</a></li>
+                  <li><a className="dropdown-item" href="#">Create Account</a></li>
+                </>
+              ) : (
+                <>
+                  <li><a className="dropdown-item" href="#">Your Account</a></li>
+                  <li><a className="dropdown-item" href="#">Switch Accounts</a></li>
+                  <li><a className="dropdown-item" href="#">Your Orders</a></li>
+                  <li><a className="dropdown-item" href="#">Your Wish List</a></li>
+                  <li><a className="dropdown-item" href="#">Keep Shopping</a></li>
+                  <li><hr className="dropdown-divider" /></li>
+                  <li><a className="dropdown-item text-danger" href="/">Sign Out</a></li>
+                </>
+              )}
             </ul>
           </div>
         </div>
