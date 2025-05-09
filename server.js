@@ -57,7 +57,7 @@ app.get("/api/search", (req, res) => {
 });
 
 // Signup route
-app.post("/signup", async (req, res) => {
+app.post("/api/auth/signup", async (req, res) => {
   const { fullname, email, mobile, password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
   const query = "INSERT INTO users (fullname, email, mobile, password) VALUES (?, ?, ?, ?)";
@@ -72,7 +72,7 @@ app.post("/signup", async (req, res) => {
 });
 
 // Login route
-app.post("/login", async (req, res) => {
+app.post("/api/auth/login", async (req, res) => {
   const { emailOrMobile, password } = req.body;
   const query = "SELECT * FROM users WHERE email = ? OR mobile = ?";
   db.query(query, [emailOrMobile, emailOrMobile], async (err, results) => {
