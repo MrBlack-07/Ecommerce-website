@@ -229,21 +229,21 @@ const Navbar = ({ isGuest, onProtectedAction }) => {
                   </div>
                 ) : searchResults.length > 0 ? (
                   <>
-                    {searchResults.map((result) => (
+                {searchResults.map((result) => (
                       <div 
-                        key={result.id} 
+                    key={result.id} 
                         className="d-flex align-items-center p-3 text-decoration-none text-dark border-bottom hover-bg-light"
                         style={{ cursor: 'pointer' }}
                         onClick={() => handleSuggestionClick(result.name)}
-                      >
-                        <img 
-                          src={result.image} 
-                          alt={result.name} 
+                  >
+                    <img 
+                      src={result.image} 
+                      alt={result.name} 
                           className="me-3 rounded" 
                           style={{ width: '50px', height: '50px', objectFit: 'cover' }} 
-                        />
+                    />
                         <div className="flex-grow-1">
-                          <div className="fw-bold">{result.name}</div>
+                      <div className="fw-bold">{result.name}</div>
                           <div className="text-muted small">{result.category}</div>
                           <div className="text-primary fw-bold">{result.price}</div>
                         </div>
@@ -275,7 +275,7 @@ const Navbar = ({ isGuest, onProtectedAction }) => {
                 setShowWishlist(false);
               }}
             >
-              <i className="fas fa-shopping-cart fs-5"></i>
+            <i className="fas fa-shopping-cart fs-5"></i>
               <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                 {cart.reduce((total, item) => total + item.quantity, 0)}
               </span>
@@ -319,7 +319,7 @@ const Navbar = ({ isGuest, onProtectedAction }) => {
                           onClick={() => handleRemoveFromCart(item.id)}
                         >
                           <i className="fas fa-times"></i>
-                        </button>
+          </button>
                       </div>
                     ))}
                     <hr />
@@ -346,7 +346,7 @@ const Navbar = ({ isGuest, onProtectedAction }) => {
                 setShowCart(false);
               }}
             >
-              <i className="fas fa-heart fs-5"></i>
+            <i className="fas fa-heart fs-5"></i>
               <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                 {wishlist.length}
               </span>
@@ -382,7 +382,7 @@ const Navbar = ({ isGuest, onProtectedAction }) => {
                             onClick={() => handleRemoveFromWishlist(item.id)}
                           >
                             <i className="fas fa-times"></i>
-                          </button>
+          </button>
                         </div>
                       </div>
                     ))}

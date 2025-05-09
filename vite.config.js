@@ -28,9 +28,9 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'https://ecommerce-website-production-09ba.up.railway.app',
         changeOrigin: true,
-        secure: false,
+        secure: true,
       },
     },
   },
