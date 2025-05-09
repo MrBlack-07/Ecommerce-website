@@ -30,11 +30,12 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:5000',
         changeOrigin: true,
+        secure: false,
       },
     },
   },
   assetsInclude: ['**/*.PNG', '**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg'],
   optimizeDeps: {
-    include: ['bootstrap-icons'],
+    include: ['react', 'react-dom']
   },
 })

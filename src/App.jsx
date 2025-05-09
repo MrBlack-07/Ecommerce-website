@@ -1,7 +1,9 @@
+import React from 'react';
 import { useEffect, useState } from "react";
 import Home from "./pages/Home";
 import LoginSignup from "./pages/LoginSignup";
 import AuthModal from "./components/AuthModal";
+import Navbar from './components/Navbar';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -22,8 +24,16 @@ function App() {
     return true;
   };
 
+  const handleProtectedAction = () => {
+    // Handle guest user actions (e.g., show login modal)
+    console.log('Please sign in to continue');
+  };
+
   return (
     <>
+      {(loggedIn || isGuest) && (
+        <Navbar isGuest={isGuest} onProtectedAction={handleProtectedAction} />
+      )}
       {loggedIn || isGuest ? (
         <Home 
           requireAuth={requireAuth} 
