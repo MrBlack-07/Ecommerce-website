@@ -30,7 +30,7 @@ const LoginSignup = ({ onLogin, onGuestContinue }) => {
 
     try {
       if (isLogin) {
-        const response = await api.post('/api/login', {
+        const response = await api.post('/api/auth/login', {
           emailOrMobile: formData.emailOrMobile,
           password: formData.password
         });
@@ -38,6 +38,7 @@ const LoginSignup = ({ onLogin, onGuestContinue }) => {
         if (response.data.message === 'Login successful') {
           setMessage('Login successful!');
           localStorage.setItem('user', JSON.stringify(response.data.user));
+          localStorage.setItem('isLoggedIn', 'true');
           setTimeout(() => onLogin(), 1000);
         }
       } else {
@@ -48,7 +49,7 @@ const LoginSignup = ({ onLogin, onGuestContinue }) => {
           return;
         }
 
-        const response = await api.post('/api/signup', {
+        const response = await api.post('/api/auth/signup', {
           fullname: formData.fullname,
           email: formData.email,
           mobile: formData.mobile,
@@ -59,13 +60,14 @@ const LoginSignup = ({ onLogin, onGuestContinue }) => {
           setMessage('Registration successful! Logging you in...');
           
           // Auto-login after successful signup
-          const loginResponse = await api.post('/api/login', {
+          const loginResponse = await api.post('/api/auth/login', {
             emailOrMobile: formData.email,
             password: formData.password
           });
           
           if (loginResponse.data.message === 'Login successful') {
             localStorage.setItem('user', JSON.stringify(loginResponse.data.user));
+            localStorage.setItem('isLoggedIn', 'true');
             setTimeout(() => onLogin(), 1000);
           }
         }
@@ -73,14 +75,10 @@ const LoginSignup = ({ onLogin, onGuestContinue }) => {
     } catch (error) {
       console.error('Auth error:', error);
       if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
         setError(error.response.data.error || 'Authentication failed');
       } else if (error.request) {
-        // The request was made but no response was received
         setError('No response from server. Please try again later.');
       } else {
-        // Something happened in setting up the request that triggered an Error
         setError('An error occurred. Please try again.');
       }
     } finally {

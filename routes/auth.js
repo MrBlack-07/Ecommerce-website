@@ -1,63 +1,73 @@
 import express from "express";
 import bcrypt from "bcrypt";
-import mysql from "mysql2";
+import pool from "../lib/db.js";
 
 const router = express.Router();
-
-// MySQL connection
-const db = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-});
-
-db.connect((err) => {
-  if (err) console.error("Database connection failed:", err);
-  else console.log("Connected to MySQL Database!");
-});
 
 // Signup Route
 router.post("/signup", async (req, res) => {
   const { fullname, email, mobile, password } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
+  
+  try {
+    // Check if user already exists
+    const { rows: existingUsers } = await pool.query(
+      'SELECT * FROM users WHERE email = $1 OR mobile = $2',
+      [email, mobile]
+    );
 
-  const query = "INSERT INTO users (fullname, email, mobile, password) VALUES (?, ?, ?, ?)";
-  db.query(query, [fullname, email, mobile, hashedPassword], (err, result) => {
-    if (err) {
-      console.error("Signup error:", err);
-      return res.status(500).json({ error: "Signup failed" });
+    if (existingUsers.length > 0) {
+      return res.status(400).json({ error: "User already exists" });
     }
-    res.status(201).json({ message: "User registered successfully!" });
-  });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const { rows } = await pool.query(
+      'INSERT INTO users (fullname, email, mobile, password) VALUES ($1, $2, $3, $4) RETURNING id, fullname, email, mobile',
+      [fullname, email, mobile, hashedPassword]
+    );
+
+    res.status(201).json({ 
+      message: "User registered successfully",
+      user: rows[0]
+    });
+  } catch (err) {
+    console.error("Signup error:", err);
+    res.status(500).json({ error: "Signup failed" });
+  }
 });
 
 // Login Route
 router.post("/login", async (req, res) => {
   const { emailOrMobile, password } = req.body;
 
-  db.query(
-    "SELECT * FROM users WHERE email = ? OR mobile = ?",
-    [emailOrMobile, emailOrMobile],
-    async (err, results) => {
-      if (err) {
-        console.error("Login DB error:", err);
-        return res.status(500).json({ error: "Login failed" });
-      }
+  try {
+    const { rows } = await pool.query(
+      'SELECT * FROM users WHERE email = $1 OR mobile = $2',
+      [emailOrMobile, emailOrMobile]
+    );
 
-      if (results.length === 0) {
-        return res.status(401).json({ error: "User not found" });
-      }
-
-      const user = results[0];
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return res.status(401).json({ error: "Incorrect password" });
-      }
-
-      res.status(200).json({ message: "Login successful" });
+    if (rows.length === 0) {
+      return res.status(401).json({ error: "User not found" });
     }
-  );
+
+    const user = rows[0];
+    const isMatch = await bcrypt.compare(password, user.password);
+    
+    if (!isMatch) {
+      return res.status(401).json({ error: "Incorrect password" });
+    }
+
+    // Remove password from user object
+    const { password: _, ...userWithoutPassword } = user;
+
+    res.status(200).json({ 
+      message: "Login successful",
+      user: userWithoutPassword
+    });
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ error: "Login failed" });
+  }
 });
 
 export default router;

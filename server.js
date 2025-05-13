@@ -31,7 +31,11 @@ app.use("/api/auth", authRoutes);
 
 // Health check endpoint
 app.get("/health", (req, res) => {
-  res.status(200).json({ status: "ok" });
+  res.status(200).json({ 
+    status: "ok",
+    environment: process.env.NODE_ENV,
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Serve static files in production
@@ -54,5 +58,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log('Environment:', process.env.NODE_ENV);
-  console.log('Database Host:', process.env.DB_HOST);
+  console.log('Database URL:', process.env.DATABASE_URL ? 'Configured' : 'Not configured');
 });
