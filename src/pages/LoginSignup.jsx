@@ -105,7 +105,7 @@ const LoginSignup = ({ onLogin, onGuestContinue }) => {
 
         {error && (
           <div className="alert alert-danger fade-in">
-            {error}
+            {typeof error === 'string' ? error : (error && error.message ? error.message : JSON.stringify(error))}
           </div>
         )}
 
