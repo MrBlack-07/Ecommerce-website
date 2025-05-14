@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://ecommerce-website-alpha-sepia.vercel.app',
+  baseURL: '', // Use relative path for Vercel serverless functions
   headers: {
     'Content-Type': 'application/json',
   },
