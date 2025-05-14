@@ -2,6 +2,9 @@ import pool from '../../lib/db.js';
 import bcrypt from 'bcrypt';
 
 export default async function handler(req, res) {
+  if (req.method === 'GET') {
+    return res.status(200).json({ message: 'Login endpoint is live!' });
+  }
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
